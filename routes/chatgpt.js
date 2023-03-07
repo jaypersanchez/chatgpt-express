@@ -13,6 +13,7 @@ router.get('/', function(req, res, next) {
   res.send(`ChatGPT ${configuration.apiKey} :: ${configuration.organization}`);
 });
 
+/* list all models available */
 router.get('/listmodels', function(req, res, next) {
     openai.listModels()
     .then(result => {
@@ -28,22 +29,45 @@ router.get('/textcompletion', function(req, res, next) {
     })
 })
 
+/* Translate natural language, taken from user audio, turning instructions into code*/
 router.get('/codecompletion', function(req, res) {
+    getCodeCompletion(req)
+    .then(result => {
+        res.send(result)
+    })
 
 })
 
-router.get('/chatcompletion', function(req, res) {
-
+/* Use with Chatbots.  Must first create chat context*/
+router.get('/createchatcontext', function(req, res) {
+    createChatContext(req)
+    .then(result => {
+        res.send(result)
+    })
 })
 
-/* Code Completion */
+/* Code Completion WIP.  Need some work*/
 const getCodeCompletion = async(req) => {
-
+    /* 
+        Code completion can use one of two models: 
+    */
+    var codecompletion = await openai.createCompletion({
+        model: req.body.model,
+        prompt: req.body.prompt,
+        temperature: req.body.temperature,
+        max_tokens: req.body.max_tokens,
+    })
+    return(codecompletion.data)
 }
 
 /* Chat Completion */
-const getChatCompletion = async(req) => {
-
+const createChatContext = async(req) => {
+    var chatcompletion = await openai.createChatCompletion({
+        model: req.body.model,
+        max_tokens: req.body.max_tokens,
+        messages: req.body.messages,
+    })
+    return(chatcompletion.data)
 }
 
 /* Text Completion */
@@ -53,7 +77,6 @@ const getTextCompletion = async (req) => {
         prompt: req.body.prompt,
         temperature: req.body.temperature,
         max_tokens: req.body.max_tokens,
-        max_tokens: 500, 
     })
     return(completion.data.choices[0].text)
 }
