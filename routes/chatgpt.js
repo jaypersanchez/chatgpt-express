@@ -38,6 +38,14 @@ router.get('/codecompletion', function(req, res) {
 
 })
 
+/* Test out chat completion create if it really converse */
+router.get('/askagent', function(req, res) {
+    getTextCompletion(req)
+    .then(response => {
+        res.send(response)
+    })
+})
+
 /* Use with Chatbots.  Must first create chat context*/
 router.get('/createchatcontext', function(req, res) {
     createChatContext(req)
@@ -45,6 +53,11 @@ router.get('/createchatcontext', function(req, res) {
         res.send(result)
     })
 })
+
+/* Chat bot conversation */
+/*const askAgent = async(req) {
+    var botresponse = await openai.
+}*/
 
 /* Code Completion WIP.  Need some work*/
 const getCodeCompletion = async(req) => {
